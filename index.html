@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poster Studio - Create Your Own Poster</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f4f8;
+  color: #222;
+}
+
+header {
+  background: #17172c;
+  color: white;
+  padding: 20px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.logo span { color: #a78bfa; }
+
+header a {
+  color: white;
+  text-decoration: none;
+  margin-left: 18px;
+}
+
+.hero {
+  background: linear-gradient(120deg,#24244c,#7047c7);
+  color: white;
+  text-align: center;
+  padding: 45px 15px;
+}
+
+.hero h1 {
+  font-size: 40px;
+  margin: 5px;
+}
+
+.hero p { color: #e1dcff; }
+
+.main {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 25px;
+  padding: 25px;
+  max-width: 1450px;
+  margin: auto;
+}
+
+.panel {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 3px 15px #0000000d;
+}
+
+.panel h2 {
+  font-size: 21px;
+  margin-top: 0;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  margin: 16px 0 7px;
+}
+
+input, select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  background: white;
+  font-size: 14px;
+}
+
+input[type=color] {
+  height: 43px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+input[type=file] {
+  font-size: 12px;
+}
+
+.templates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.template {
+  border: 2px solid #eee;
+  background: #fafafa;
+  border-radius: 9px;
+  padding: 12px 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.template:hover {
+  border-color: #8055db;
+  background: #f4efff;
+}
+
+button {
+  cursor: pointer;
+  font-family: Arial;
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.preview {
+  background: #dedee7;
+  padding: 20px;
+  border-radius: 14px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas {
+  width: 100%;
+  max-width: 540px;
+  height: auto;
+  background: white;
+  box-shadow: 0 5px 20px #0003;
+  border-radius: 3px;
+}
+
+.download {
+  width: 100%;
+  max-width: 540px;
+  background: #7047c7;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 9px;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.download:hover { background: #5833a7; }
+
+.reset {
+  width: 100%;
+  background: #eee;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 18px;
+}
+
+.tip {
+  background: #f2edff;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 18px;
+}
+
+footer {
+  background: #17172c;
+  color: white;
+  text-align: center;
+  padding: 25px;
+  margin-top: 25px;
+}
+
+@media(max-width:850px) {
+  .main { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 30px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">POSTER<span>STUDIO.</span></div>
+  <nav>
+    <a href="#templates">Templates</a>
+    <a href="#editor">Editor</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <h1>CREATE SOMETHING AMAZING.</h1>
+  <p>Design your own professional posters in seconds.</p>
+</div>
+
+<div class="main">
+
+<!-- EDITING PANEL -->
+
+<div class="panel" id="editor">
+
+<h2>🎨 Poster Editor</h2>
+
+<h3>Choose a template</h3>
+
+<div class="templates" id="templates">
+  <button class="template" onclick="setTemplate('birthday')">🎂 Birthday</button>
+  <button class="template" onclick="setTemplate('sports')">⚽ Sports</button>
+  <button class="template" onclick="setTemplate('business')">💼 Business</button>
+  <button class="template" onclick="setTemplate('music')">🎵 Music</button>
+  <button class="template" onclick="setTemplate('school')">📚 School</button>
+  <button class="template" onclick="setTemplate('sale')">🏷️ Sale</button>
+</div>
+
+<hr style="border:0;border-top:1px solid #eee;margin:22px 0">
+
+<h3>Your poster writing</h3>
+
+<label>Main Heading</label>
+<input id="title" value="YOUR BIG IDEA" oninput="drawPoster()">
+
+<label>Subtitle</label>
+<input id="subtitle" value="Make something amazing." oninput="drawPoster()">
+
+<label>Extra information</label>
+<input id="extra" value="DESIGNED BY YOU" oninput="drawPoster()">
+
+<label>Background Colour</label>
+<input type="color" id="bg" value="#24244c" oninput="drawPoster()">
+
+<label>Text Colour</label>
+<input type="color" id="textColor" value="#ffffff" oninput="drawPoster()">
+
+<label>Font Style</label>
+<select id="font" onchange="drawPoster()">
+  <option value="Arial">Arial</option>
+  <option value="Georgia">Georgia</option>
+  <option value="Impact">Impact</option>
+  <option value="Verdana">Verdana</option>
+  <option value="Trebuchet MS">Trebuchet MS</option>
+</select>
+
+<label>Heading Size</label>
+<input type="range" id="size" min="35" max="110" value="75" oninput="drawPoster()">
+
+<label>Upload Your Own Photo</label>
+<input type="file" id="photo" accept="image/*">
+
+<button class="reset" onclick="resetPoster()">↻ Reset Poster</button>
+
+<div class="tip">
+  💡 <b>Tip:</b> Try different templates, colours and fonts to create your own unique design!
+</div>
+
+</div>
+
+<!-- POSTER PREVIEW -->
+
+<div class="editor">
+
+<h2>Your Live Poster Preview</h2>
+
+<div class="preview">
+<canvas id="poster" width="800" height="1100"></canvas>
+</div>
+
+<button class="download" onclick="downloadPoster()">
+⬇ DOWNLOAD YOUR POSTER
+</button>
+
+<p style="color:#777;font-size:13px">
+  Your poster is updated automatically as you edit it.
+</p>
+
+</div>
+</div>
+
+<footer>
+<h2>POSTER STUDIO.</h2>
+<p>Imagine it. Design it. Create it.</p>
+<p>Made for creative people.</p>
+</footer>
+
+<script>
+
+const canvas = document.getElementById("poster");
+const ctx = canvas.getContext("2d");
+
+let uploadedImage = null;
+
+function drawPoster() {
+
+  const title = document.getElementById("title").value;
+  const subtitle = document.getElementById("subtitle").value;
+  const extra = document.getElementById("extra").value;
+  const bg = document.getElementById("bg").value;
+  const color = document.getElementById("textColor").value;
+  const font = document.getElementById("font").value;
+  const size = Number(document.getElementById("size").value);
+
+  ctx.clearRect(0,0,800,1100);
+
+  if (uploadedImage) {
+    const scale = Math.max(800/uploadedImage.width,1100/uploadedImage.height);
+    const w = uploadedImage.width*scale;
+    const h = uploadedImage.height*scale;
+    ctx.drawImage(uploadedImage,(800-w)/2,(1100-h)/2,w,h);
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.fillRect(0,0,800,1100);
+  } else {
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,800,1100);
+  }
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 5;
+  ctx.strokeRect(35,35,730,1030);
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = color;
+
+  ctx.font = "bold 22px Arial";
+  ctx.fillText("✦  YOUR CREATIVE SPACE  ✦",400,130);
+
+  ctx.font = "bold " + size + "px " + font;
+  wrapText(title.toUpperCase(),400,420,680,size*1.15);
+
+  ctx.font = "30px " + font;
+  wrapText(subtitle,400,700,650,43);
+
+  ctx.font = "bold 24px Arial";
+  wrapText(extra,400,950,650,36);
+
+  ctx.font = "16px Arial";
+  ctx.fillText("CREATED WITH POSTER STUDIO",400,1015);
+
+}
+
+function wrapText(text,x,y,maxWidth,lineHeight) {
+  const words = text.split(" ");
+  let line = "";
+  let currentY = y;
+
+  words.forEach((word,index) => {
+    const test = line + word + " ";
+    if (ctx.measureText(test).width > maxWidth && line !== "") {
+      ctx.fillText(line.trim(),x,currentY);
+      line = word + " ";
+      currentY += lineHeight;
+    } else {
+      line = test;
+    }
+  });
+
+  ctx.fillText(line.trim(),x,currentY);
+}
+
+function setTemplate(type) {
+
+  uploadedImage = null;
+  document.getElementById("photo").value = "";
+
+  const title = document.getElementById("title");
+  const subtitle = document.getElementById("subtitle");
+  const extra = document.getElementById("extra");
+  const bg = document.getElementById("bg");
+  const color = document.getElementById("textColor");
+
+  const designs = {
+    birthday: ["HAPPY BIRTHDAY!","Let's celebrate together!","PARTY TIME","#f5a0c5","#ffffff"],
+    sports: ["GAME DAY!","Play hard. Win big.","NEVER GIVE UP","#102a54","#ffffff"],
+    business: ["YOUR BRAND","Make your business stand out.","QUALITY • STYLE • SUCCESS","#e9e5d8","#252525"],
+    music: ["FEEL THE MUSIC","The night starts here.","LIVE MUSIC EVENT","#28123d","#f8d86a"],
+    school: ["DREAM BIG","Your future starts today.","NEVER STOP LEARNING","#164d84","#ffffff"],
+    sale: ["MEGA SALE!","Amazing offers available now.","SHOP TODAY","#e52e32","#ffffff"]
+  };
+
+  const d = designs[type];
+
+  title.value = d[0];
+  subtitle.value = d[1];
+  extra.value = d[2];
+  bg.value = d[3];
+  color.value = d[4];
+
+  drawPoster();
+}
+
+document.getElementById("photo").addEventListener("change",function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+    const img = new Image();
+    img.onload = function() {
+      uploadedImage = img;
+      drawPoster();
+    };
+    img.src = event.target.result;
+  };
+
+  reader.readAsDataURL(file);
+});
+
+function downloadPoster() {
+  const link = document.createElement("a");
+  link.download = "my-poster.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
+
+function resetPoster() {
+  uploadedImage = null;
+  document.getElementById("photo").value = "";
+  document.getElementById("title").value = "YOUR BIG IDEA";
+  document.getElementById("subtitle").value = "Make something amazing.";
+  document.getElementById("extra").value = "DESIGNED BY YOU";
+  document.getElementById("bg").value = "#24244c";
+  document.getElementById("textColor").value = "#ffffff";
+  document.getElementById("font").value = "Arial";
+  document.getElementById("size").value = 75;
+  drawPoster();
+}
+
+drawPoster();
+
+</script>
+
+</body>
+</html>
