@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111827">
+  <title>Poster Studio AI — Make something amazing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--ink:#111827;--muted:#687386;--line:#e7eaf0;--purple:#7657f6;--purple2:#9a83ff;--bg:#f6f7fb;--white:#fff}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"DM Sans",sans-serif}
+    button,input,textarea,select{font:inherit}button{cursor:pointer}
+    .topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 4.5%;position:sticky;top:0;z-index:10}
+    .brand{display:flex;align-items:center;gap:11px;font:700 20px "Space Grotesk",sans-serif;letter-spacing:-.6px}
+    .brandmark{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#7657f6,#b26cff);display:grid;place-items:center;color:#fff;font-size:20px;box-shadow:0 5px 14px #7657f644}
+    .top-actions{display:flex;align-items:center;gap:12px}.pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 14px;color:#596273;font-size:12px;font-weight:700}
+    .hero{padding:34px 4.5% 22px;background:radial-gradient(ellipse at 80% 0%,#e8e2ff 0,transparent 42%),linear-gradient(120deg,#fff 0%,#f8f7ff 100%)}
+    .eyebrow{color:var(--purple);font-weight:800;text-transform:uppercase;letter-spacing:1.5px;font-size:11px}
+    h1{font:700 clamp(30px,4vw,46px)/1.08 "Space Grotesk",sans-serif;letter-spacing:-1.8px;margin:10px 0 8px}
+    .hero p{color:var(--muted);margin:0;max-width:680px;font-size:15px;line-height:1.6}
+    .workspace{display:grid;grid-template-columns:minmax(290px,360px) minmax(0,1fr);gap:22px;padding:22px 4.5% 50px;align-items:start}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 28px #202b4408}
+    .sidebar{padding:20px;display:flex;flex-direction:column;gap:20px}
+    .section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+    .section-head h2{font:700 14px "Space Grotesk",sans-serif;margin:0}
+    .small-note{font-size:11px;color:#929aaa}
+    .ai-card{border-radius:15px;padding:16px;background:linear-gradient(135deg,#21164f,#4933a7 70%,#7558e9);color:#fff;position:relative;overflow:hidden}
+    .ai-card:after{content:"✦";position:absolute;right:16px;top:7px;font-size:62px;color:#ffffff20}
+    .ai-title{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;position:relative;z-index:1}
+    .ai-title span{background:#ffffff20;border:1px solid #ffffff35;border-radius:7px;padding:4px 7px;font-size:10px}
+    .ai-card p{font-size:12px;line-height:1.5;color:#e5e0ff;margin:8px 0 12px;max-width:270px;position:relative;z-index:1}
+    .prompt{width:100%;resize:vertical;min-height:88px;border:1px solid #ffffff45;border-radius:11px;background:#fff;color:#20243a;padding:11px;font-size:12px;outline:none;position:relative;z-index:1}
+    .prompt::placeholder{color:#9295a8}
+    .ai-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;position:relative;z-index:1}
+    .ai-hint{font-size:10px;color:#d6ceff}
+    .primary{border:0;border-radius:10px;background:var(--purple);color:#fff;font-weight:800;padding:11px 15px;font-size:12px;box-shadow:0 5px 12px #7657f633}
+    .primary:hover{background:#6545ed}.ai-card .primary{background:#fff;color:#5438c5;box-shadow:none}
+    .ai-card .primary:hover{background:#f0edff}
+    .templates{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+    .template{border:1px solid var(--line);border-radius:11px;background:#fff;padding:8px 5px;text-align:center;color:#4d5668;font-size:10px;font-weight:700;transition:.15s}
+    .template:hover,.template.active{border-color:#9b88ff;background:#f7f4ff;color:#6545ed}
+    .template .thumb{height:57px;border-radius:7px;margin-bottom:7px;display:flex;align-items:center;justify-content:center;color:white;font:700 13px "Space Grotesk",sans-serif;letter-spacing:-.5px;overflow:hidden}
+    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:11px}
+    .field label{font-size:11px;font-weight:800;color:#596273}
+    .field input,.field textarea,.field select{border:1px solid var(--line);border-radius:9px;padding:10px 11px;background:#fff;color:#222b3b;font-size:12px;outline:none;width:100%}
+    .field input:focus,.field textarea:focus,.field select:focus{border-color:#9b88ff;box-shadow:0 0 0 3px #7657f615}
+    .field textarea{resize:vertical;min-height:62px}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    input[type=color]{height:38px;padding:4px!important}
+    input[type=range]{accent-color:var(--purple);padding:0!important}
+    .upload{border:1px dashed #cfd3df;border-radius:10px;padding:11px;text-align:center;font-size:11px;color:#737d90;display:block;cursor:pointer}
+    .upload:hover{border-color:var(--purple);background:#faf9ff}
+    .upload input{display:none}
+    .divider{height:1px;background:var(--line)}
+    .editor-area{min-width:0}
+    .editor-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+    .editor-toolbar h2{font:700 15px "Space Grotesk",sans-serif;margin:0}
+    .toolbar-actions{display:flex;gap:8px;align-items:center}
+    .secondary{border:1px solid var(--line);background:#fff;color:#4f596b;border-radius:9px;padding:10px 12px;font-size:11px;font-weight:800}
+    .secondary:hover{background:#f7f7fb}
+    .download{background:#171b2b;color:#fff;border:0;border-radius:9px;padding:11px 15px;font-size:11px;font-weight:800}
+    .canvas-wrap{background:#e9ebf2;border:1px solid #e0e3eb;border-radius:18px;padding:clamp(14px,3vw,28px);display:flex;justify-content:center;align-items:flex-start;min-height:600px;overflow:hidden}
+    canvas{width:min(100%,560px);height:auto;aspect-ratio:3/4;background:#fff;border-radius:4px;box-shadow:0 14px 42px #1d24352c}
+    .below{font-size:11px;color:#8a92a1;text-align:center;margin-top:11px}
+    .toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);background:#171b2b;color:#fff;padding:12px 16px;border-radius:10px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:30;box-shadow:0 8px 25px #0002}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .loading{opacity:.7;pointer-events:none}.spinner{display:inline-block;width:12px;height:12px;border:2px solid #ffffff66;border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes spin{to{transform:rotate(360deg)}}
+    .foot{padding:0 4.5% 28px;color:#929aaa;font-size:11px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    @media(max-width:900px){.workspace{grid-template-columns:1fr}.sidebar{order:2}.editor-area{order:1}.canvas-wrap{min-height:0}.sidebar{display:grid;grid-template-columns:1fr 1fr}.ai-card{grid-column:1/-1}}
+    @media(max-width:560px){.topbar{padding:0 18px}.hero{padding:25px 18px 18px}.workspace{padding:16px 14px 35px}.sidebar{display:flex}.top-actions .pill{display:none}.editor-toolbar{align-items:flex-start}.canvas-wrap{padding:12px}.foot{padding:0 18px 24px}}
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brandmark">✦</div>Poster Studio</div>
+  <div class="top-actions"><span class="pill">FREE DESIGN EDITOR</span><span class="pill">AI-POWERED IDEAS</span></div>
+</header>
+<section class="hero">
+  <div class="eyebrow">Your ideas, made visual</div>
+  <h1>Make a poster worth looking at.</h1>
+  <p>Start with a template or tell the AI assistant what you have in mind. Make it yours, then download your design.</p>
+</section>
+
+<main class="workspace">
+  <aside class="panel sidebar">
+    <section class="ai-card" id="aiCard">
+      <div class="ai-title">✦ AI Poster Assistant <span>SMART DESIGN</span></div>
+      <p>Describe your poster and I'll create a design direction with a title, colours and style.</p>
+      <textarea id="aiPrompt" class="prompt" placeholder="e.g. A bold basketball tryouts poster for Friday. Black, orange and energetic..."></textarea>
+      <div class="ai-bottom"><span class="ai-hint">Be as creative as you like.</span><button class="primary" id="generateBtn">Generate ✦</button></div>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>Start with a template</h2><span class="small-note">Choose a style</span></div>
+      <div class="templates">
+        <button class="template active" data-template="event"><div class="thumb" style="background:linear-gradient(140deg,#24214f,#7860f4)">EVENT</div>Event</button>
+        <button class="template" data-template="sport"><div class="thumb" style="background:linear-gradient(140deg,#111827,#f97316)">GAME ON</div>Sports</button>
+        <button class="template" data-template="birthday"><div class="thumb" style="background:linear-gradient(140deg,#ff7aa8,#8c68ed)">PARTY!</div>Birthday</button>
+        <button class="template" data-template="school"><div class="thumb" style="background:linear-gradient(140deg,#0f766e,#38b2ac)">LEARN</div>School</button>
+        <button class="template" data-template="sale"><div class="thumb" style="background:linear-gradient(140deg,#b91c1c,#f59e0b)">SALE</div>Sale</button>
+        <button class="template" data-template="music"><div class="thumb" style="background:linear-gradient(140deg,#18102d,#db2777)">LIVE</div>Music</button>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+    <section>
+      <div class="section-head"><h2>Edit your wording</h2><span class="small-note">Live preview</span></div>
+      <div class="field"><label for="title">MAIN TITLE</label><input id="title" maxlength="48" value="MAKE IT HAPPEN"></div>
+      <div class="field"><label for="subtitle">SUBTITLE</label><input id="subtitle" maxlength="70" value="Your next big event starts here"></div>
+      <div class="field"><label for="details">EXTRA DETAILS</label><textarea id="details" maxlength="180">FRIDAY • 6:00 PM\nEVERYONE IS WELCOME</textarea></div>
+    </section>
+
+    <div class="divider"></div>
+    <section>
+      <div class="section-head"><h2>Customise the look</h2><span class="small-note">Make it yours</span></div>
+      <div class="two">
+        <div class="field"><label for="bgColor">BACKGROUND</label><input type="color" id="bgColor" value="#29215b"></div>
+        <div class="field"><label for="textColor">TEXT COLOUR</label><input type="color" id="textColor" value="#ffffff"></div>
+      </div>
+      <div class="field"><label for="accentColor">ACCENT COLOUR</label><input type="color" id="accentColor" value="#b8a7ff"></div>
+      <div class="field"><label for="font">FONT STYLE</label><select id="font"><option value="Space Grotesk">Modern bold</option><option value="Arial">Clean</option><option value="Georgia">Classic</option><option value="Impact">Extra bold</option><option value="DM Sans">Friendly</option></select></div>
+      <div class="field"><label for="size">TITLE SIZE <span id="sizeValue">100%</span></label><input type="range" id="size" min="70" max="135" value="100"></div>
+      <label class="upload">＋ Add your own photo<input type="file" id="photo" accept="image/*"></label>
+      <div style="margin-top:10px"><button class="secondary" id="removePhoto" style="width:100%">Remove photo</button></div>
+    </section>
+  </aside>
+
+  <section class="editor-area">
+    <div class="editor-toolbar">
+      <h2>Your poster preview</h2>
+      <div class="toolbar-actions"><button class="secondary" id="resetBtn">↺ Reset</button><button class="download" id="downloadBtn">Download PNG ↓</button></div>
+    </div>
+    <div class="canvas-wrap"><canvas id="poster" width="900" height="1200"></canvas></div>
+    <div class="below">Your design updates as you edit. Download to save a high-quality PNG.</div>
+  </section>
+</main>
+<footer class="foot"><span>Poster Studio · Make something amazing</span><span>Designs are created in your browser. Your uploaded photos stay on your device.</span></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const canvas = $("poster"), ctx = canvas.getContext("2d");
+let uploadedImage = null;
+const defaults = {title:"MAKE IT HAPPEN",subtitle:"Your next big event starts here",details:"FRIDAY • 6:00 PM\nEVERYONE IS WELCOME",bg:"#29215b",text:"#ffffff",accent:"#b8a7ff",font:"Space Grotesk",size:100};
+const presets = {
+ event:{...defaults},
+ sport:{title:"GAME ON",subtitle:"THE BIG MATCH STARTS HERE",details:"SATURDAY • 3:30 PM\nBRING YOUR ENERGY",bg:"#111827",text:"#ffffff",accent:"#fb923c",font:"Impact",size:112},
+ birthday:{title:"LET'S CELEBRATE!",subtitle:"YOU'RE INVITED TO THE PARTY",details:"SATURDAY • 2:00 PM\nCAKE • MUSIC • GOOD TIMES",bg:"#8c3f8f",text:"#ffffff",accent:"#ffc2d9",font:"Space Grotesk",size:96},
+ school:{title:"THINK BIG",subtitle:"SCHOOL COMMUNITY DAY",details:"WEDNESDAY • 10:00 AM\nACTIVITIES FOR EVERYONE",bg:"#0f625d",text:"#ffffff",accent:"#a7f3d0",font:"DM Sans",size:104},
+ sale:{title:"BIG SALE",subtitle:"GREAT FINDS. GREAT PRICES.",details:"THIS WEEK ONLY\nDON'T MISS OUT",bg:"#a82727",text:"#ffffff",accent:"#ffd166",font:"Impact",size:125},
+ music:{title:"FEEL THE BEAT",subtitle:"LIVE MUSIC NIGHT",details:"FRIDAY • DOORS OPEN 7 PM\nLIVE • LOUD • TOGETHER",bg:"#24123c",text:"#ffffff",accent:"#f9a8d4",font:"Impact",size:110}
+};
+function val(id){return $(id).value}
+function setFields(d){$("title").value=d.title;$("subtitle").value=d.subtitle;$("details").value=d.details;$("bgColor").value=d.bg;$("textColor").value=d.text;$("accentColor").value=d.accent;$("font").value=d.font;$("size").value=d.size;$("sizeValue").textContent=d.size+"%";draw()}
+function wrap(text,maxWidth,font){ctx.font=font;const words=text.split(/\s+/);let lines=[],line="";for(const word of words){const test=line?line+" "+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test}if(line)lines.push(line);return lines}
+function draw(){
+ const w=canvas.width,h=canvas.height,bg=val("bgColor"),tc=val("textColor"),ac=val("accentColor"),font=val("font");
+ ctx.clearRect(0,0,w,h);
+ ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+ if(uploadedImage){const scale=Math.max(w/uploadedImage.width,h/uploadedImage.height),iw=uploadedImage.width*scale,ih=uploadedImage.height*scale;ctx.drawImage(uploadedImage,(w-iw)/2,(h-ih)/2,iw,ih);ctx.fillStyle="rgba(10,12,25,.56)";ctx.fillRect(0,0,w,h)}
+ // graphic accents
+ ctx.globalAlpha=.18;ctx.fillStyle=ac;ctx.beginPath();ctx.arc(790,135,230,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(80,1090,190,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+ ctx.strokeStyle=ac;ctx.lineWidth=5;ctx.strokeRect(38,38,w-76,h-76);
+ ctx.fillStyle=ac;ctx.fillRect(82,130,105,10);
+ ctx.font=`700 22px "${font}"`;ctx.fillStyle=tc;ctx.fillText("POSTER STUDIO  /  YOUR EVENT",82,105);
+ const title=val("title").trim()||"YOUR TITLE",scale=Number(val("size"))/100;
+ let fs=112*scale,lines;
+ do{lines=wrap(title,710,`800 ${fs}px "${font}"`);if(lines.length>3)fs-=5;else break}while(fs>48);
+ ctx.font=`800 ${fs}px "${font}"`;ctx.fillStyle=tc;ctx.textBaseline="top";
+ const titleY=390-(lines.length-1)*fs*.28;
+ lines.forEach((line,i)=>ctx.fillText(line,82,titleY+i*fs*1.08));
+ const sub=val("subtitle").trim();ctx.font=`600 32px "DM Sans"`;ctx.fillStyle=ac;
+ const subLines=wrap(sub,700,`600 32px "DM Sans"`);subLines.slice(0,3).forEach((line,i)=>ctx.fillText(line,85,titleY+lines.length*fs*1.08+38+i*43));
+ ctx.fillStyle=tc;ctx.font=`600 27px "DM Sans"`;const details=val("details").split("\n");let dy=titleY+lines.length*fs*1.08+38+subLines.slice(0,3).length*43+58;
+ details.slice(0,5).forEach(line=>{wrap(line,700,`600 27px "DM Sans"`).forEach(wline=>{ctx.fillText(wline,85,dy);dy+=39});});
+ ctx.fillStyle=ac;ctx.fillRect(85,1030,730,3);
+ ctx.font=`700 18px "DM Sans"`;ctx.fillStyle=tc;ctx.fillText("MAKE IT YOURS. MAKE IT MEMORABLE.",85,1065);
+ ctx.textBaseline="alphabetic";
+}
+["title","subtitle","details","bgColor","textColor","accentColor","font","size"].forEach(id=>$(id).addEventListener("input",()=>{if(id==="size")$("sizeValue").textContent=val("size")+"%";draw()}));
+document.querySelectorAll(".template").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".template").forEach(b=>b.classList.remove("active"));btn.classList.add("active");setFields(presets[btn.dataset.template]);}));
+$("photo").addEventListener("change",e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{uploadedImage=img;draw();toast("Photo added to your poster")};img.src=reader.result};reader.readAsDataURL(file)});
+$("removePhoto").addEventListener("click",()=>{uploadedImage=null;$("photo").value="";draw();toast("Photo removed")});
+$("resetBtn").addEventListener("click",()=>{uploadedImage=null;$("photo").value="";document.querySelectorAll(".template").forEach(b=>b.classList.remove("active"));document.querySelector('[data-template="event"]').classList.add("active");setFields(defaults);toast("Poster reset")});
+$("downloadBtn").addEventListener("click",()=>{draw();const a=document.createElement("a");a.download="my-poster.png";a.href=canvas.toDataURL("image/png");a.click();toast("Your poster is downloading")});
+function toast(message){const t=$("toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
+function safeText(s,max){return typeof s==="string"?s.slice(0,max):""}
+$("generateBtn").addEventListener("click",async()=>{
+ const prompt=$("aiPrompt").value.trim();if(!prompt){toast("Describe the poster you want first");$("aiPrompt").focus();return}
+ const btn=$("generateBtn");btn.classList.add("loading");btn.innerHTML='<span class="spinner"></span>Creating...';
+ try{
+   const res=await fetch("/.netlify/functions/ai-poster",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
+   const data=await res.json();
+   if(!res.ok)throw new Error(data.error||"The AI assistant couldn't respond.");
+   const d=data.design||data;
+   $("title").value=safeText(d.title,48)||"YOUR BIG IDEA";
+   $("subtitle").value=safeText(d.subtitle,70);
+   $("details").value=safeText(d.details,180);
+   if(/^#[0-9a-f]{6}$/i.test(d.backgroundColor||""))$("bgColor").value=d.backgroundColor;
+   if(/^#[0-9a-f]{6}$/i.test(d.textColor||""))$("textColor").value=d.textColor;
+   if(/^#[0-9a-f]{6}$/i.test(d.accentColor||""))$("accentColor").value=d.accentColor;
+   if(["Space Grotesk","Arial","Georgia","Impact","DM Sans"].includes(d.font))$("font").value=d.font;
+   $("size").value=Math.min(135,Math.max(70,Number(d.titleSize)||100));$("sizeValue").textContent=$("size").value+"%";
+   uploadedImage=null;$("photo").value="";
+   draw();toast("Your AI poster design is ready!");
+ }catch(err){toast(err.message.includes("not configured")?"AI isn't connected yet. Follow the setup guide in the download.":err.message)}
+ finally{btn.classList.remove("loading");btn.textContent="Generate ✦"}
+});
+setFields(defaults);
+</script>
+</body>
+</html>
